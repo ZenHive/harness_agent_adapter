@@ -1,0 +1,17 @@
+# Grok MCP servers configuration.
+# Mirrors .mcp.json with additional Grok-specific options.
+
+[mcp_servers.tidewave]
+url = "http://localhost:4034/tidewave/mcp"
+enabled = true
+startup_timeout_sec = 15
+
+[mcp_servers.harness]
+url = "http://localhost:4018/harness/mcp"
+enabled = true
+startup_timeout_sec = 15
+
+[mcp_servers.harness_tidewave]
+url = "http://localhost:4018/tidewave/mcp"
+enabled = true
+startup_timeout_sec = 15

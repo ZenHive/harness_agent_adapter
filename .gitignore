@@ -1,0 +1,58 @@
+# The directory Mix will write compiled artifacts to.
+/_build/
+
+# If you run "mix test --cover", coverage assets end up here.
+/cover/
+
+# The directory Mix downloads your dependencies sources to.
+/deps/
+
+# Where third-party dependencies like ExDoc output generated docs.
+/doc/
+
+# Offline HexDocs cache (mix hex.docs fetch / hexdocs_mcp). Unanchored so a
+# stray cache fetched into a nested dir (e.g. priv/templates/) is ignored too.
+.hex-docs/
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+*.ez
+
+# Ignore package tarball (built via "mix hex.build").
+harness_agent_adapter-*.tar
+
+# Temporary files, for example, from tests.
+/tmp/
+
+# Dialyzer PLTs live outside _build/ so they survive `mix clean` and can be cached by CI
+/priv/plts/
+
+# Grok (xAI Grok Build TUI / agent)
+# Project-local config that is *meant* to be shared lives under .grok/
+# (config.toml for MCP, skills/, hooks/, agents/, plugins/, lsp.json, sandbox.toml).
+# Everything else under .grok/ is runtime state / local overrides and should stay out of git.
+.grok/*
+# Explicitly allow the documented shareable project-level pieces
+!.grok/config.toml
+!.grok/skills/
+!.grok/hooks/
+!.grok/agents/
+!.grok/plugins/
+!.grok/lsp.json
+!.grok/sandbox.toml
+
+# Claude Code — local runtime state / per-user settings.
+# Shareable project config (e.g. .claude/settings.json) stays trackable.
+.claude/settings.local.json
+
+# mise / asdf — `.tool-versions` (canonical) IS committed to pin the
+# project's Erlang/Elixir for any contributor. Variant suffixes
+# (.1.18, .rc-1.20, etc.) stay local — they're per-developer scratch files
+# for testing across Elixir versions.
+.tool-versions.*
+
+# mix reach report viewer output (generated)
+/reach_report/
+.ci-out/

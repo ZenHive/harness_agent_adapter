@@ -1,0 +1,9 @@
+schema_version = 2
+project = "harness_agent_adapter"
+default_branch = "main"
+vision = "The Harness.AgentAdapter behaviour plus six adapters for headless coding-agent CLIs (Claude Code, Cursor, Codex, Grok, Antigravity, Pi), all driven over uniform OTP Ports with no per-agent SDK and no output normalization. Extracted from the harness orchestration engine so any BEAM consumer can spawn and drive a headless coding agent without depending on harness's dispatch, review, or landing machinery."
+
+[phases.1]
+name = "Extraction"
+order = 1
+status = "in_progress"
