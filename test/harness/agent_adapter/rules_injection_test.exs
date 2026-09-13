@@ -149,6 +149,22 @@ defmodule Harness.AgentAdapter.RulesInjectionTest do
       refute File.exists?(Path.join(cwd, ".cursor/rules/harness-operational.mdc"))
     end
 
+    test "restores a project-owned Cursor rules file displaced at install", %{cwd: cwd} do
+      path = Path.join(cwd, ".cursor/rules/harness-operational.mdc")
+      backup = Path.join(cwd, ".harness/cursor-rules-operational.mdc.orig")
+      File.mkdir_p!(Path.dirname(path))
+      File.write!(path, "project owned rules")
+
+      assert :ok = RulesInjection.install_cursor_rules(invocation(cwd))
+      assert File.read!(path) =~ @rule_content
+      assert File.read!(backup) == "project owned rules"
+
+      assert :ok = RulesInjection.cleanup_injected_rules(cwd)
+
+      assert File.read!(path) == "project owned rules"
+      refute File.exists?(backup)
+    end
+
     test "strips the injected AGENTS.md block and preserves repo content", %{cwd: cwd} do
       agents = Path.join(cwd, "AGENTS.md")
       File.write!(agents, "target repo instructions")
