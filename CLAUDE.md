@@ -5,6 +5,7 @@
 ## Always-on includes (core only)
 
 @~/.claude/includes/critical-rules.md
+@~/.claude/includes/elixir-security-adjudications.md
 @~/.claude/includes/harness-workflow.md
 
 <!--

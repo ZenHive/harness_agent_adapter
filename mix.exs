@@ -91,7 +91,7 @@ defmodule Harness.AgentAdapter.MixProject do
   defp deps do
     [
       # Core
-      {:descripex, "~> 0.8"},
+      {:descripex, "~> 1.0.0"},
       # `Harness.AgentAdapter.Watchdog` calls `Jason.decode/1` in runtime code.
       # In the harness monorepo this was only transitive (via dev/test tooling
       # like credo/dialyzer_json); here it must be a direct runtime dep so a
