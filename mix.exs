@@ -139,12 +139,12 @@ defmodule Harness.AgentAdapter.MixProject do
         "credo --strict --ignore TagTODO,TagFIXME"
       ],
       # Dispatch-scale gate — the harness reviewer's `check_command` hint.
+      # Format + compile only; reviewers choose focused tests. Full analyzers
+      # stay on `ci` / `precommit.full` so slimming this alias cannot drop them
+      # from QA.
       "check.dispatch": [
         "format --check-formatted",
-        "compile --warnings-as-errors",
-        "credo --strict --ignore TagTODO,TagFIXME",
-        "doctor --raise",
-        "sobelow --skip --exit low"
+        "compile --warnings-as-errors"
       ],
       # Fast local pre-commit loop — deliberately WITHOUT dialyzer (cold-PLT
       # cost) or a coverage pass (that's `ci`'s job). Runs the suite plain so
@@ -165,9 +165,10 @@ defmodule Harness.AgentAdapter.MixProject do
       # the repo and a BEAM: CI, a fork, a contributor's laptop. Coverage floor
       # 85 matches the vibe_kit family default (a small, single-purpose adapter
       # package with no untestable Phoenix/dashboard surface to exclude).
+      # Starts with `check.dispatch` so format + compile stay in QA when that
+      # alias is slim; remaining analyzers are listed here explicitly.
       ci: [
-        "format --check-formatted",
-        "compile --warnings-as-errors",
+        "check.dispatch",
         "credo --strict --ignore TagTODO,TagFIXME",
         "doctor --raise",
         "ex_dna --max-clones 0",
@@ -190,39 +191,74 @@ defmodule Harness.AgentAdapter.MixProject do
       # output, not mtimes, so drift in a transitive @-import is caught too.
       # AGENTS.md is what the cross-family (codex/cursor/grok) reviewers read;
       # a stale render makes them gate against rules that already changed.
-      "agents.check": [&agents_check/1]
+      "agents.check": [fn _args -> agents_check(["--check"]) end]
     ]
   end
 
+  @sync_agents_md_operator "~/_DATA/code/claude-marketplace/scripts/sync-agents-md.sh"
+  @sync_agents_md_claude "~/.claude/plugins/marketplaces/zenhive/scripts/sync-agents-md.sh"
+  @sync_agents_md_grok "~/.grok/marketplace-cache/*/scripts/sync-agents-md.sh"
+
   # Shells out to a script OUTSIDE this repo, on the developer host: the
-  # AGENTS.md renderer needs the claude-marketplace checkout plus
-  # ~/.claude/includes. Absent in CI. Skip loudly rather than `mix cmd`'s
-  # :enoent, which would abort the whole alias and take every step after it
-  # down too.
-  @spec agents_check([String.t()]) :: :ok
-  defp agents_check(_args) do
-    host_script(
-      "~/_DATA/code/claude-marketplace/scripts/sync-agents-md.sh",
-      ["--check"],
-      "AGENTS.md freshness check"
-    )
+  # AGENTS.md renderer needs claude-marketplace (operator checkout or an
+  # installed marketplace copy) plus ~/.claude/includes. Absent in CI. Skip
+  # loudly rather than `mix cmd`'s :enoent, which would abort the whole alias
+  # and take every step after it down too. First existing executable wins.
+  @doc false
+  @spec sync_agents_md_search_locations() :: [String.t()]
+  def sync_agents_md_search_locations do
+    [@sync_agents_md_operator, @sync_agents_md_claude, @sync_agents_md_grok]
   end
 
-  @spec host_script(String.t(), [String.t()], String.t()) :: :ok
-  defp host_script(path, args, label) do
-    expanded = Path.expand(path)
+  @doc false
+  @spec sync_agents_md_candidates() :: [String.t()]
+  def sync_agents_md_candidates do
+    [
+      Path.expand(@sync_agents_md_operator),
+      Path.expand(@sync_agents_md_claude)
+      | Path.wildcard(Path.expand(@sync_agents_md_grok))
+    ]
+  end
 
-    if File.exists?(expanded) do
-      {_out, status} =
-        System.cmd(expanded, args, into: IO.stream(:stdio, :line), stderr_to_stdout: true)
+  @doc false
+  @spec agents_check([String.t()]) :: :ok
+  def agents_check(args) when is_list(args) do
+    agents_check(args, sync_agents_md_candidates(), sync_agents_md_search_locations())
+  end
 
-      if status != 0 do
-        Mix.raise("#{label} failed (#{expanded} exited #{status})")
-      end
-    else
-      Mix.shell().info("[skip] #{label}: #{expanded} not found (developer-host script, absent in CI).")
+  @doc false
+  @spec agents_check([String.t()], [String.t()]) :: :ok
+  def agents_check(args, candidates) when is_list(args) and is_list(candidates) do
+    agents_check(args, candidates, candidates)
+  end
+
+  @doc false
+  @spec agents_check([String.t()], [String.t()], [String.t()]) :: :ok
+  def agents_check(args, candidates, looked_in) when is_list(args) and is_list(candidates) and is_list(looked_in) do
+    case Enum.find(candidates, &executable_script?/1) do
+      nil ->
+        Mix.shell().info(
+          "[skip] AGENTS.md freshness check: #{Enum.join(looked_in, ", ")} not found (developer-host script, absent in CI)."
+        )
+
+        :ok
+
+      script ->
+        {_out, status} =
+          System.cmd(script, args, into: IO.stream(:stdio, :line), stderr_to_stdout: true)
+
+        if status != 0 do
+          Mix.raise("AGENTS.md freshness check failed (#{script} exited #{status})")
+        end
+
+        :ok
     end
+  end
 
-    :ok
+  defp executable_script?(path) when is_binary(path) do
+    case File.stat(path) do
+      {:ok, %File.Stat{type: :regular, mode: mode}} -> Bitwise.band(mode, 0o111) != 0
+      _ -> false
+    end
   end
 end

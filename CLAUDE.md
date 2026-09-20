@@ -28,9 +28,12 @@ Claude's skills/includes.
 - **Toolchain:** Elixir / OTP pinned by the repo-local `.tool-versions`
   (asdf-managed) — read that file for the exact versions in effect; don't
   hardcode a version here that can drift out of sync with it.
-- **Command inventory:** `mix ci` is the full post-merge QA command. Read
-  `mix.exs` for the contents of `check.dispatch`; choose scoped commands and
-  focused tests using the imported verification policy.
+- **Command inventory:** `mix check.dispatch` is format + compile only;
+  reviewers add focused tests and risk-relevant live/security checks.
+  `mix ci` is the portable full post-merge QA command (`check.dispatch`
+  plus Credo, Doctor, clone detection, Reach, Sobelow, the coverage
+  suite, and Dialyzer). `mix precommit.full` is `ci` plus `agents.check`.
+  Read `mix.exs` for the exact alias steps.
 
 - **`mix test.json` and `mix dialyzer.json` emit JSON by design** (the
   `ex_unit_json` / `dialyzer_json` reporters) — this is not a build failure.
