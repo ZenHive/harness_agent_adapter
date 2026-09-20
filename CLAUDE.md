@@ -1,5 +1,7 @@
 # harness_agent_adapter — CLAUDE.md
 
+@~/.claude/includes/verification-policy.md
+
 **Repo:** [github.com/ZenHive/harness_agent_adapter](https://github.com/ZenHive/harness_agent_adapter) (public, default branch `main`).
 
 ## Always-on includes (core only)
@@ -26,13 +28,10 @@ Claude's skills/includes.
 - **Toolchain:** Elixir / OTP pinned by the repo-local `.tool-versions`
   (asdf-managed) — read that file for the exact versions in effect; don't
   hardcode a version here that can drift out of sync with it.
-- **`mix ci` is the portable gate** — the comprehensive pass that grades this
-  repo, run before a PR/merge and as the landed-base Architect/QA check after
-  a harness wave lands. **`mix check.dispatch`** is the cheaper per-dispatch
-  hint the harness reviewer runs during an isolated worktree review; the
-  reviewer must still add focused `mix test.json ...` checks for touched
-  behavior. Both are Mix aliases defined in `mix.exs` — read the alias
-  definitions there for the exact step list rather than assuming one.
+- **Command inventory:** `mix ci` is the full post-merge QA command. Read
+  `mix.exs` for the contents of `check.dispatch`; choose scoped commands and
+  focused tests using the imported verification policy.
+
 - **`mix test.json` and `mix dialyzer.json` emit JSON by design** (the
   `ex_unit_json` / `dialyzer_json` reporters) — this is not a build failure.
   Parse the JSON payload for real failures; never flag the JSON envelope
