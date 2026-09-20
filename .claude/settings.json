@@ -11,9 +11,5 @@
       }
     }
   },
-  "enabledPlugins": {
-    "elixir@zenhive": true,
-    "elixir-workflows@zenhive": true,
-    "harness@zenhive": true
-  }
+  "enabledPlugins": {}
 }
