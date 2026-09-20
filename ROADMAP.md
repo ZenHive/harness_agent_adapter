@@ -9,9 +9,9 @@
 ## Current Focus
 
 <!-- FOCUS:BEGIN -->
-**Focus phase:** 1 — Extraction (0 of 1 done · 1 in progress)
+**Focus phase:** 1 — Extraction (1 of 1 done · 0 in progress)
 
-**Last shipped:** no recent shipments
+**Last shipped:** Task 2 — Run AGENTS.md freshness check from an installed marketplace copy when the operator checkout is absent on 2026-09-20
 
 **Up next:** none — focus phase complete or all blocked
 <!-- FOCUS:END -->
@@ -25,5 +25,5 @@
 <!-- TASKS:BEGIN phase=1 -->
 | Task | Status | Notes |
 |------|--------|-------|
-| Task 2 | 🔄 | 🎁 **qa-gates** · 🐛 Run AGENTS.md freshness check from an installed marketplace copy when the operator checkout is absent [D:2/B:3/U:2 → Eff:1.25] 📋 |
+| Task 2 | ✅ | 🎁 **qa-gates** · 🐛 Run AGENTS.md freshness check from an installed marketplace copy when the operator checkout is absent [D:2/B:3/U:2 → Eff:1.25] 📋 |
 <!-- TASKS:END -->
