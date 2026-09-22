@@ -77,6 +77,43 @@
       "verified_by": "codex",
       "verification_ref": "harness-run:run-1789946965017-e7dfaf3e",
       "cross_repo": []
+    },
+    {
+      "id": 3,
+      "phase": 1,
+      "bundle": "qa-gates",
+      "status": "done",
+      "title": "Repair process-fixture port-close race and refresh generated agent instructions found by integrated QA",
+      "scores": {
+        "d": 1,
+        "b": 2,
+        "u": 2
+      },
+      "eff": 2.0,
+      "dep_layer": 0,
+      "unlocks": 0,
+      "markers": [
+        "bug"
+      ],
+      "depends_on": [],
+      "assignee": "codex",
+      "model": "gpt-6-astra",
+      "acceptance_criteria": [
+        "The process-fixture death test observes port termination without closing a possibly closed port and still asserts OS process death",
+        "Focused process-fixture and MixProject tests pass",
+        "Generated AGENTS.md passes mix agents.check"
+      ],
+      "files_to_modify": [
+        "test/harness/agent_adapter/testing/process_fixture_test.exs",
+        "AGENTS.md"
+      ],
+      "body": "Integrated QA at bca03d29dbe27c76cd4adb3c17c8877405229900 found an ArgumentError in the process fixture test when Port.close raced the exit after SIGKILL, plus AGENTS.md drift from the host harness-workflow include. Task 2 already repaired marketplace lookup; it correctly surfaced this new drift, so lookup requires no duplicate repair. Small fixes completed inline in audit(bca03d2): monitor the port before signaling and assert its DOWN message; regenerate AGENTS.md with the installed marketplace generator. Original QA remains failed. Fifteen focused tests, compile --warnings-as-errors and mix agents.check passed after repair. Evidence and exact command outcomes are preserved in .audit/bca03d2.md. No independent reviewer approval is claimed.",
+      "created_at": "2026-09-22",
+      "done_at": "2026-09-22",
+      "scored_at": "2026-09-22",
+      "implemented": "Fixed inline in audit(bca03d2): monitored port termination and regenerated AGENTS.md; 15 focused tests, compilation and freshness check passed. Original integrated QA remains failed; see .audit/bca03d2.md. No independent review claimed.",
+      "delivered_by": "codex",
+      "cross_repo": []
     }
   ]
 }

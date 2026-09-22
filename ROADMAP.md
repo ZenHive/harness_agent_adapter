@@ -9,9 +9,9 @@
 ## Current Focus
 
 <!-- FOCUS:BEGIN -->
-**Focus phase:** 1 — Extraction (1 of 1 done · 0 in progress)
+**Focus phase:** 1 — Extraction (2 of 2 done · 0 in progress)
 
-**Last shipped:** Task 2 — Run AGENTS.md freshness check from an installed marketplace copy when the operator checkout is absent on 2026-09-20
+**Last shipped:** Task 3 — Repair process-fixture port-close race and refresh generated agent instructions found by integrated QA on 2026-09-22
 
 **Up next:** none — focus phase complete or all blocked
 <!-- FOCUS:END -->
@@ -26,4 +26,5 @@
 | Task | Status | Notes |
 |------|--------|-------|
 | Task 2 | ✅ | 🎁 **qa-gates** · 🐛 Run AGENTS.md freshness check from an installed marketplace copy when the operator checkout is absent [D:2/B:3/U:2 → Eff:1.25] 📋 |
+| Task 3 | ✅ | 🎁 **qa-gates** · 🐛 Repair process-fixture port-close race and refresh generated agent instructions found by integrated QA [D:1/B:2/U:2 → Eff:2.0] 🎯 |
 <!-- TASKS:END -->

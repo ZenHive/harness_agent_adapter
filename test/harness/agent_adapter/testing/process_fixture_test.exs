@@ -25,9 +25,10 @@ defmodule Harness.AgentAdapter.Testing.ProcessFixtureTest do
   describe "await_dead/2" do
     test "returns :ok once the process is gone" do
       {port, os_pid} = ProcessFixture.spawn_sleep()
+      monitor = Port.monitor(port)
 
       OSProcess.sigkill(os_pid)
-      Port.close(port)
+      assert_receive {:DOWN, ^monitor, :port, ^port, :normal}, 1_000
 
       assert ProcessFixture.await_dead(os_pid) == :ok
     end
