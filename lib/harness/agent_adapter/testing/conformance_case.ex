@@ -153,9 +153,10 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
       @spec live_model!() :: String.t() | nil
       defp live_model! do
         cond do
-          # Enum.empty?/1, not `== []`: the type checker sees each adapter's literal
-          # families per expansion and flags a `== []` against a non-empty list.
-          Enum.empty?(@adapter.capabilities().model_families) ->
+          # requires_model?/1, not a match on model_families: its boolean() spec
+          # hides each adapter's literal families from the type checker, and
+          # model_families may be :any (Pi), which Enum functions reject.
+          not Harness.AgentAdapter.requires_model?(@adapter) ->
             nil
 
           model = System.get_env(@live_model_env) ->
@@ -393,6 +394,9 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
 
       describe "live end-to-end through Harness.AgentAdapter.Driver (real agent)" do
         @tag :integration
+        # Above Driver.run's 120s total_timeout so the driver's own deadline, not
+        # ExUnit's 60s default, ends a slow agent run.
+        @tag timeout: 180_000
         test "drives a real run through invocation, raw capture and termination" do
           repo = GitFixture.init_repo()
 
