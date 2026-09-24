@@ -291,7 +291,7 @@ defmodule Harness.AgentAdapter do
   end
 
   @doc """
-  Unsets the adapter's `c:Harness.AgentAdapter.Capabilities.t/0`
+  Unsets the adapter's `t:Harness.AgentAdapter.Capabilities.t/0`
   `auth_env_scrub` keys in `env` so the spawned CLI bills the operator's
   subscription, not a stray provider API key.
 

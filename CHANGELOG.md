@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-24
+
 ### Added
 
 - **Extracted from `harness`.** The `Harness.AgentAdapter` behaviour, its six
@@ -48,4 +50,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   removed. Mirrors the existing preserve-the-remainder handling of Codex's
   `AGENTS.md`.
 
-No release has been cut yet.
+[Unreleased]: https://github.com/ZenHive/harness_agent_adapter/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ZenHive/harness_agent_adapter/releases/tag/v0.1.0

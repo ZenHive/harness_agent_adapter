@@ -28,17 +28,17 @@ code, which every adapter here treats as advisory-only.
 
 ## Installation
 
-Not published to hex.pm. Add it as a `git:` dependency:
+Add it to your dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:harness_agent_adapter, git: "https://github.com/ZenHive/harness_agent_adapter.git", tag: "v0.1.0"}
+    {:harness_agent_adapter, "~> 0.1.0"}
   ]
 end
 ```
 
-Pin a `tag:`, `branch:`, or `ref:` per your usual git-dependency practice.
+Docs: [hexdocs.pm/harness_agent_adapter](https://hexdocs.pm/harness_agent_adapter).
 
 ## Usage
 
