@@ -153,7 +153,9 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
       @spec live_model!() :: String.t() | nil
       defp live_model! do
         cond do
-          @adapter.capabilities().model_families == [] ->
+          # Enum.empty?/1, not `== []`: the type checker sees each adapter's literal
+          # families per expansion and flags a `== []` against a non-empty list.
+          Enum.empty?(@adapter.capabilities().model_families) ->
             nil
 
           model = System.get_env(@live_model_env) ->
