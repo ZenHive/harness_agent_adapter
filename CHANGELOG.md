@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the suite resolves in a consumer's build instead of raising
   `UndefinedFunctionError` on a module that never left this repo's
   `test/support/`.
+- **Live conformance test takes its model from the environment.** A
+  model-capable adapter's `:integration` test reads
+  `HARNESS_AGENT_ADAPTER_LIVE_MODEL_<NAME>` (e.g. `..._CLAUDE`) and `flunk`s
+  with the `export` line when it is unset — the model is required, never
+  defaulted.
 - **Standalone config namespace.** The package reads its own
   `config :harness_agent_adapter, :run` key (`total_timeout:`,
   `idle_timeout:`, `progress_timeout:`, `terminate_grace_ms:`) instead of the

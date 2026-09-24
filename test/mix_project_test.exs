@@ -132,14 +132,12 @@ defmodule Harness.AgentAdapter.MixProjectTest do
   end
 
   describe "CLAUDE.md alias inventory" do
-    test "imports verification-policy and names the slim dispatch vs full QA aliases" do
+    test "imports verification-policy and names the dispatch vs full QA aliases" do
       claude = File.read!("CLAUDE.md")
 
       assert claude =~ "@~/.claude/includes/verification-policy.md"
-      assert claude =~ "`mix check.dispatch`"
-      assert claude =~ "`mix ci`"
-      assert claude =~ "`mix precommit.full`"
-      assert claude =~ "format + compile"
+      assert claude =~ "`check.dispatch`"
+      assert claude =~ "`mix ci` is the full post-merge QA command"
       refute claude =~ "## Verification scope"
     end
   end

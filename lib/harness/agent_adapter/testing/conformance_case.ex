@@ -111,7 +111,10 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
   port messages and delegate to `Harness.AgentAdapter.OSProcess`), so a stand-in
   port is a faithful exercise. One `:integration`-tagged test drives the real
   agent end to end through `Harness.AgentAdapter.Driver.run/3`; it `flunk`s with
-  install instructions when the agent binary is absent.
+  install instructions when the agent binary is absent. A model-capable adapter
+  also needs its model pinned in `HARNESS_AGENT_ADAPTER_LIVE_MODEL_<NAME>`
+  (`<NAME>` is the adapter module's last segment, upcased — e.g. `CLAUDE`);
+  the test `flunk`s when it is unset rather than fall back to a default.
 
   ## The gate
 
@@ -140,6 +143,32 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
       alias Harness.AgentAdapter.Testing.ProcessFixture
 
       @adapter adapter
+
+      # Model is required, never defaulted: the live test takes the operator's
+      # pin from e.g. HARNESS_AGENT_ADAPTER_LIVE_MODEL_CLAUDE for the Claude adapter.
+      @live_model_env "HARNESS_AGENT_ADAPTER_LIVE_MODEL_" <>
+                        (adapter |> Module.split() |> List.last() |> String.upcase())
+
+      # nil for an adapter with no `--model` flag (`model_families: []`).
+      @spec live_model!() :: String.t() | nil
+      defp live_model! do
+        cond do
+          @adapter.capabilities().model_families == [] ->
+            nil
+
+          model = System.get_env(@live_model_env) ->
+            model
+
+          true ->
+            flunk("""
+            #{inspect(@adapter)} is model-capable and a model is required — there is
+            no default. Pin one for the live conformance test, then re-run:
+
+                export #{@live_model_env}=<model id from the agent CLI's model list>
+                mix test --include integration
+            """)
+        end
+      end
 
       # A baseline run request; `attrs` overrides any field for a specific case.
       @spec invocation(keyword()) :: Invocation.t()
@@ -364,7 +393,9 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
         @tag :integration
         test "drives a real run through invocation, raw capture and termination" do
           repo = GitFixture.init_repo()
-          request = invocation(prompt: "Reply with exactly the word: pong", cwd: repo)
+
+          request =
+            invocation(prompt: "Reply with exactly the word: pong", cwd: repo, model: live_model!())
 
           case Driver.run(@adapter, request, total_timeout: 120_000, idle_timeout: 60_000) do
             {:ok, %Outcome{} = outcome} ->
@@ -380,6 +411,13 @@ defmodule Harness.AgentAdapter.Testing.ConformanceCase do
               integration test cannot run. Install the agent's CLI, then re-run:
 
                   mix test --include integration
+              """)
+
+            {:error, {:invalid_model_for_adapter, _adapter, model}} ->
+              flunk("""
+              #{@live_model_env}=#{inspect(model)} is not a model #{inspect(@adapter)}
+              accepts (see its `capabilities/0` `model_families`). Set a model id the
+              agent's CLI lists, then re-run.
               """)
           end
         end
