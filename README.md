@@ -101,6 +101,26 @@ is the SIGTERM-to-SIGKILL window `OSProcess.kill_tree/1` waits so agent
 CLIs can flush their transcript tail. Per-call `opts` passed to
 `Driver.run/3` override the application config.
 
+## Live integration tests
+
+`mix test --include integration` drives each real agent CLI end to end. The
+model is required, never defaulted, so pin one per adapter — any id the CLI
+lists works:
+
+| Env var | List models with |
+|---|---|
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_CLAUDE` | `claude --help` (`--model`) |
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_CODEX` | `model` in `~/.codex/config.toml` |
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_CURSOR` | `cursor-agent --list-models` |
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_GROK` | `grok models` |
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_ANTIGRAVITY` | `agy models` |
+| `HARNESS_AGENT_ADAPTER_LIVE_MODEL_PI` | `pi --list-models` |
+
+A missing CLI or unset variable fails the test with the exact fix. Your own
+adapter run through `Harness.AgentAdapter.Testing.ConformanceCase` reads
+`HARNESS_AGENT_ADAPTER_LIVE_MODEL_<NAME>`, where `<NAME>` is the module's
+last segment, upcased.
+
 ## Public API
 
 The package's public surface is intentionally small — an adapter and its
